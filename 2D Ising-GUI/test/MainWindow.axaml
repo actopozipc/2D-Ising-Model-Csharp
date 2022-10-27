@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="test.MainWindow"
+        Title="test">
+  <StackPanel>
+    
+
+    <StackPanel Orientation="Horizontal">
+      <TextBox x:Name="tb_x" Text="256" Width="25" Height="12"></TextBox>
+      <TextBox x:Name="tb_y" Text="128" Width="25" Height="12"></TextBox>
+      <Button Click="OnButtonClick"> Start </Button>
+     
+      <StackPanel Width="500">
+        <Label x:Name="label" HorizontalAlignment="Right"></Label>
+        <Label x:Name="l_accepted" Content="Minimum Energy accepted:" HorizontalAlignment="Right">
+
+        </Label>
+        <Label x:Name="l_found" Content="Minimum Energy found:" HorizontalAlignment="Right">
+
+        </Label>
+      </StackPanel>
+
+    </StackPanel>
+
+
+    <Image x:Name="image" Width="1300" Height="750"  VerticalAlignment="Top" HorizontalAlignment="Center">
+
+    </Image>
+  </StackPanel>
+
+</Window>
