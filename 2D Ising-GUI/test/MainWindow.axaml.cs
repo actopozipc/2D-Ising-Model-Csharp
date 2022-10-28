@@ -21,11 +21,68 @@ namespace test
             InitializeComponent();
 
         }
+        double kb = 1.380649e-23; //Boltzmann-constant
+        double Temp = 1; //Fixed Temp
+         //Iterations
+        private async void OnButtonClick2(object sender, RoutedEventArgs e)
+        {
+            int iterations = 100000;
+            int X = Convert.ToInt32(tb_x.Text); //X of Lattice
+            int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
+            irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
+            //Choose an initial state
+            Lattice lattice1 = new Lattice(X, Y);
+            await DrawLatticeToGui(lattice1); //Draw initial lattice
+            List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
+            Parallel.For(0, iterations, i =>
+            {
+               
+                
+                
+                    //Save old configuration
+                    Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
+                    //Choose a site i
+                    lattice2.flipRandomBit(1000);
+                    //Calculate the energy change diffE which results if the spin at site i is overturned
+                    var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+                    var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
+                    hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
+
+                
+                if (newHamiltonian < oldHamiltonian)
+                {
+                    lattice1 = lattice2.Copy(); //Continue with the new configuration
+                }
+                else
+                {
+                    var diffE = oldHamiltonian - newHamiltonian; //Energy difference
+                    //Generate a random number r such that 0<r<1
+                    Random random = new Random();
+                    var r = random.NextDouble();
+                    //if r<exp(-diffE/kbT), flip the spin
+                    if (r < Math.Exp(diffE / (kb * Temp)))
+                    {
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    }
+                }
+
+            });
+           
+
+                await DrawLatticeToGui(lattice1, iterations); //Draw new configuration
+
+                l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
+                l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
+
+            
+        }
+        public void GenerateLattice(List<(double, int)> hamiltons, Lattice lattice1)
+        {
+
+        }
         private async void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            var kb = 1.380649e-23; //Boltzmann-constant
-            var Temp = 1e-11; //Fixed Temp
-            var iterations = 1000; //Iterations
+            int iterations = 1000;
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
@@ -38,21 +95,30 @@ namespace test
             {
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
-                //Choose a site i
-                lattice2.flipRandomBit(100);
+                                                    //Choose a site i
+                lattice2.flipRandomBit(1000);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
                 var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
                 hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
-                var diffE = newHamiltonian - oldHamiltonian; //Energy difference
-                //Generate a random number r such that 0<r<1
-                Random random = new Random();
-                var r = random.NextDouble();
-                //if r<exp(-diffE/kbT), flip the spin
-                if (r < Math.Exp(-diffE / (kb * Temp)))
+
+
+                if (newHamiltonian < oldHamiltonian)
                 {
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
-                }   
+                }
+                else
+                {
+                    var diffE = oldHamiltonian - newHamiltonian; //Energy difference
+                    //Generate a random number r such that 0<r<1
+                    Random random = new Random();
+                    var r = random.NextDouble();
+                    //if r<exp(-diffE/kbT), flip the spin
+                    if (r < Math.Exp(diffE / ( Temp*kb)))
+                    {
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    }
+                }
 
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
 
