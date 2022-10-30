@@ -26,7 +26,8 @@ namespace test
          //Iterations
         private async void OnButtonClick2(object sender, RoutedEventArgs e)
         {
-            int iterations = 100000;
+            int iterations = Convert.ToInt32(tb_iterations.Text);
+            int flips = Convert.ToInt32(tb_flips.Text);
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
@@ -36,13 +37,12 @@ namespace test
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
             Parallel.For(0, iterations, i =>
             {
-               
-                
+
                 
                     //Save old configuration
                     Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
                     //Choose a site i
-                    lattice2.flipRandomBit(1000);
+                    lattice2.flipRandomBit(flips);
                     //Calculate the energy change diffE which results if the spin at site i is overturned
                     var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                     var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
@@ -82,7 +82,8 @@ namespace test
         }
         private async void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            int iterations = 1000;
+            int iterations = Convert.ToInt32(tb_iterations.Text);
+            int flips = Convert.ToInt32(tb_flips.Text);
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
@@ -96,7 +97,7 @@ namespace test
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
                                                     //Choose a site i
-                lattice2.flipRandomBit(1000);
+                lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
                 var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state

@@ -14,14 +14,30 @@
       <Button Click="OnButtonClick"> Start </Button>
       <Button Click="OnButtonClick2">Multithreaded</Button>
      
-      <StackPanel Width="500">
-        <Label x:Name="label" HorizontalAlignment="Right"></Label>
-        <Label x:Name="l_accepted" Content="Minimum Energy accepted:" HorizontalAlignment="Right">
+      <StackPanel Width="500" Orientation="Horizontal">
+        <StackPanel Orientation="Vertical">
+          <Label x:Name="label" Content="0" HorizontalAlignment="Center"></Label>
+          <Label x:Name="l_accepted" Content="Minimum Energy accepted:" HorizontalAlignment="Center">
+          </Label>
+          <Label x:Name="l_found" Content="Minimum Energy found:" HorizontalAlignment="Center">
+            </Label>
+          
+        </StackPanel>
 
-        </Label>
-        <Label x:Name="l_found" Content="Minimum Energy found:" HorizontalAlignment="Right">
 
-        </Label>
+       
+
+    
+        <StackPanel HorizontalAlignment="Right" >
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label>Iterations:</Label>
+            <TextBox x:Name="tb_iterations" Text="1000" Width="50" Height="20"></TextBox>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <Label>Flips:</Label>
+            <TextBox x:Name="tb_flips" Text="100" Width="50" Height="20"></TextBox>
+          </StackPanel>
+        </StackPanel>
       </StackPanel>
 
     </StackPanel>
