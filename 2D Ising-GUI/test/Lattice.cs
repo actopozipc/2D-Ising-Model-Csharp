@@ -18,7 +18,10 @@ namespace test
         /// Factor J used in the Hamiltonian
         /// </summary>
         private int J { get; set; }
-
+        /// <summary>
+        /// Magnetization factor
+        /// </summary>
+        public int u { get; set; }
         /// <summary>
         /// Constructor of the class
         /// Creates a random X times Y Array with -1 or 1
@@ -26,7 +29,7 @@ namespace test
         /// <param name="X">Rows</param>
         /// <param name="Y">Columns</param>
         /// <param name="j">J Factor of Hamilton</param>
-        public Lattice(int X, int Y, int j = 1)
+        public Lattice(int X, int Y, int j = 1, int u=1)
         {
             Spins = new int[X,Y];
             Random r = new Random();
@@ -45,6 +48,7 @@ namespace test
                 }
             }
             J = j;
+            this.u = u;
 
         }
         /// <summary>
@@ -71,16 +75,17 @@ namespace test
         {
             //Hamilton = -J * Sum of Energy around a spin - magnetfun
             double energy = 0;
+            double magnetization = 0;
             for (int x = 0; x < Spins.GetLength(0); x++)
             {
                 for (int y = 0; y < Spins.GetLength(1); y++)
                 {
                     var spin = Spins[x, y];
                     //Default values if there are no spins left, right, up and down
-                    var left = 0.0;
-                    var right = 0.0;
-                    var down = 0.0;
-                    var up = 0.0;
+                    var left = Spins[Spins.GetLength(0)-1,y]; //if the spin is the first in a row, take the spin from the other side
+                    var right = Spins[0,y];  //if the spin is the last in a row, take the spin from the other side
+                    var down = Spins[x, 0]; //if the spin is the last in a column, take the first 
+                    var up = Spins[x, Spins.GetLength(1) - 1]; //if the spin is the first in a column, take the last
                     if (x > 0) //If the spin is not the first in the row
                     {
                         left = Spins[x - 1, y];
@@ -97,18 +102,17 @@ namespace test
                             down = Spins[x, y + 1];
                         }
                     }
-
+                    magnetization = magnetization + Spins[x, y];
                     energy = energy + spin
                     *(left
                     + right
                     + down
                     + up);
-                    //influence through magnetization is missing here probably
 
                 }
 
             }
-            return -J * energy;
+            return -J * energy - this.u*magnetization;
         }
         /// <summary>
         /// Print function for console / Later usage 

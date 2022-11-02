@@ -1,14 +1,10 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 namespace test
@@ -23,7 +19,14 @@ namespace test
         }
         double kb = 1.380649e-23; //Boltzmann-constant
         double Temp = 1; //Fixed Temp
+        double kbT = 2.269;
          //Iterations
+
+        /// <summary>
+        /// Multithreaded 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnButtonClick2(object sender, RoutedEventArgs e)
         {
             int iterations = Convert.ToInt32(tb_iterations.Text);
@@ -60,7 +63,7 @@ namespace test
                     Random random = new Random();
                     var r = random.NextDouble();
                     //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / (kb * Temp)))
+                    if (r < Math.Exp(diffE / (kbT)))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                     }
@@ -80,6 +83,12 @@ namespace test
         {
 
         }
+        /// <summary>
+        /// Singlethreaded
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnButtonClick(object sender, RoutedEventArgs e)
         {
             int iterations = Convert.ToInt32(tb_iterations.Text);
@@ -115,7 +124,7 @@ namespace test
                     Random random = new Random();
                     var r = random.NextDouble();
                     //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / ( Temp*kb)))
+                    if (r < Math.Exp(diffE / (kbT)))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                     }
