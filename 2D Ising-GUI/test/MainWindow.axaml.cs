@@ -38,6 +38,9 @@ namespace test
             Lattice lattice1 = new Lattice(X, Y);
             await DrawLatticeToGui(lattice1); //Draw initial lattice
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
+            
+            var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+            
             Parallel.For(0, iterations, i =>
             {
 
@@ -47,14 +50,13 @@ namespace test
                     //Choose a site i
                     lattice2.flipRandomBit(flips);
                     //Calculate the energy change diffE which results if the spin at site i is overturned
-                    var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                     var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
-                    hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
 
                 
                 if (newHamiltonian < oldHamiltonian)
                 {
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    oldHamiltonian = newHamiltonian;
                 }
                 else
                 {
@@ -66,8 +68,11 @@ namespace test
                     if (r < Math.Exp(diffE / (kbT)))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        oldHamiltonian = newHamiltonian;
                     }
                 }
+                
+                hamiltons.Add((oldHamiltonian, i)); //Safe the new config for statistical reasons
 
             });
            
