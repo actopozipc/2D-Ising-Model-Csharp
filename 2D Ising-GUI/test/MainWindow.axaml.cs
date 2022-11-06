@@ -38,10 +38,12 @@ namespace test
             Lattice lattice1 = new Lattice(X, Y);
             await DrawLatticeToGui(lattice1); //Draw initial lattice
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
+            List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
+
+
+            int count = 0;
             Parallel.For(0, iterations, i =>
             {
-
-                
                     //Save old configuration
                     Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
                     //Choose a site i
@@ -49,12 +51,15 @@ namespace test
                     //Calculate the energy change diffE which results if the spin at site i is overturned
                     var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                     var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
-                    hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
-
-                
+                    
                 if (newHamiltonian < oldHamiltonian)
                 {
-                    lattice1 = lattice2.Copy(); //Continue with the new configuration
+                   
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+                        magnetizations.Add((lattice2.m, count));
+                    count++;
+                  
                 }
                 else
                 {
@@ -65,17 +70,23 @@ namespace test
                     //if r<exp(-diffE/kbT), flip the spin
                     if (r < Math.Exp(diffE / (kbT)))
                     {
-                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        
+                            lattice1 = lattice2.Copy(); //Continue with the new configuration
+                            hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+                            magnetizations.Add((lattice2.m, count));
+                        count++;
+                        
                     }
                 }
 
             });
-           
+            
 
-                await DrawLatticeToGui(lattice1, iterations); //Draw new configuration
-
+            await DrawLatticeToGui(lattice1, iterations); //Draw new configuration
+                
                 l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
+            await WriteToFileAsync(hamiltons, magnetizations);
 
             
         }
@@ -101,6 +112,7 @@ namespace test
             await DrawLatticeToGui(lattice1); //Draw initial lattice
             
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
+            List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
             for (int i = 0; i < iterations; i++)
             {
                 //Save old configuration
@@ -110,12 +122,12 @@ namespace test
                 //Calculate the energy change diffE which results if the spin at site i is overturned
                 var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
-                hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
-
 
                 if (newHamiltonian < oldHamiltonian)
                 {
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
+                    magnetizations.Add((lattice2.m, i));
                 }
                 else
                 {
@@ -127,6 +139,8 @@ namespace test
                     if (r < Math.Exp(diffE / (kbT)))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
+                        magnetizations.Add((lattice2.m, i));
                     }
                 }
 
@@ -136,6 +150,29 @@ namespace test
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
 
             }
+            await WriteToFileAsync(hamiltons, magnetizations);
+        }
+        /// <summary>
+        /// Writes hamiltons and magnetization into a file
+        /// iteration, hamilton, magnetization
+        /// in this order so numpy can easily convert it
+        /// </summary>
+        public async Task WriteToFileAsync(List<(double, int)> hamiltons, List<(double, int)> magnetizations)
+        {
+            //Order them by time
+            hamiltons.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+            magnetizations.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+            hamiltons.Reverse();
+            magnetizations.Reverse();
+            //hamiltons.OrderBy(x => x.Item2);
+            //magnetizations.OrderBy(x => x.Item2);
+            
+            string[] lines = new string[hamiltons.Count]; //string list for file
+            for (int i = 0; i < hamiltons.Count; i++)
+            {
+                lines[i] = $"{hamiltons[i].Item2}, {hamiltons[i].Item1},{magnetizations[i].Item1}";
+            }
+            await File.WriteAllLinesAsync($"{DateTime.Now.ToString().Replace(':','-')}.csv", lines);
         }
 
             /// <summary>

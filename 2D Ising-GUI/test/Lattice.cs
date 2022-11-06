@@ -23,6 +23,10 @@ namespace test
         /// </summary>
         public int u { get; set; }
         /// <summary>
+        /// Magnetization
+        /// </summary>
+        public double m { get; set; }
+        /// <summary>
         /// Constructor of the class
         /// Creates a random X times Y Array with -1 or 1
         /// </summary>
@@ -103,6 +107,7 @@ namespace test
                         }
                     }
                     magnetization = magnetization + Spins[x, y];
+                    this.m = magnetization;
                     energy = energy + spin
                     *(left
                     + right
@@ -156,6 +161,7 @@ namespace test
                 }
             }
             copy.J = this.J;
+            copy.m = this.m;
             return copy;
         }
     }
