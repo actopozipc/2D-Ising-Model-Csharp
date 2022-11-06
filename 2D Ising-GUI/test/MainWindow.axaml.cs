@@ -42,6 +42,9 @@ namespace test
 
 
             int count = 0;
+            
+            var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+            
             Parallel.For(0, iterations, i =>
             {
                     //Save old configuration
@@ -49,18 +52,16 @@ namespace test
                     //Choose a site i
                     lattice2.flipRandomBit(flips);
                     //Calculate the energy change diffE which results if the spin at site i is overturned
-                    var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
                     var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
                     
                 if (newHamiltonian < oldHamiltonian)
                 {
                    
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        oldHamiltonian = newHamiltonian;
                         hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
                         magnetizations.Add((lattice2.m, count));
-                    count++;
-                  
-                }
+                        count++;
                 else
                 {
                     var diffE = oldHamiltonian - newHamiltonian; //Energy difference
@@ -76,8 +77,12 @@ namespace test
                             magnetizations.Add((lattice2.m, count));
                         count++;
                         
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        oldHamiltonian = newHamiltonian;
                     }
                 }
+                
+                hamiltons.Add((oldHamiltonian, i)); //Safe the new config for statistical reasons
 
             });
             
@@ -113,6 +118,7 @@ namespace test
             
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
             List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
+            var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
             for (int i = 0; i < iterations; i++)
             {
                 //Save old configuration
@@ -120,12 +126,13 @@ namespace test
                                                     //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
-                var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+                
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
 
                 if (newHamiltonian < oldHamiltonian)
                 {
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    oldHamiltonian = newHamiltonian;
                     hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
                     magnetizations.Add((lattice2.m, i));
                 }
