@@ -53,15 +53,16 @@ namespace test
                     lattice2.flipRandomBit(flips);
                     //Calculate the energy change diffE which results if the spin at site i is overturned
                     var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
-                    
+
                 if (newHamiltonian < oldHamiltonian)
                 {
-                   
-                        lattice1 = lattice2.Copy(); //Continue with the new configuration
-                        oldHamiltonian = newHamiltonian;
-                        hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
-                        magnetizations.Add((lattice2.m, count));
-                        count++;
+
+                    lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    oldHamiltonian = newHamiltonian;
+                    hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+                    magnetizations.Add((lattice2.m, count));
+                    count++;
+                }
                 else
                 {
                     var diffE = oldHamiltonian - newHamiltonian; //Energy difference
@@ -71,12 +72,12 @@ namespace test
                     //if r<exp(-diffE/kbT), flip the spin
                     if (r < Math.Exp(diffE / (kbT)))
                     {
-                        
-                            lattice1 = lattice2.Copy(); //Continue with the new configuration
-                            hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
-                            magnetizations.Add((lattice2.m, count));
+
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+                        magnetizations.Add((lattice2.m, count));
                         count++;
-                        
+
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                         oldHamiltonian = newHamiltonian;
                     }
@@ -197,10 +198,10 @@ namespace test
                     for (int j = 0; j < l.Spins.GetLength(1); j++)
                     {
                         Graphics g = Graphics.FromImage(irBitmap);
-                        System.Drawing.Color color = System.Drawing.Color.FromName("Blue"); //Spin 1
+                        System.Drawing.Color color = System.Drawing.Color.FromArgb(185, 103, 255); //Spin 1
                         if (l.Spins[i, j] == -1)
                         {
-                            color = System.Drawing.Color.FromName("Brown"); //Spin -1
+                            color = System.Drawing.Color.FromArgb(1, 205, 254); //Spin -1
                         }
                         g.DrawRectangle(new System.Drawing.Pen(color), new System.Drawing.Rectangle(i, j, 1, 1));
                     }
