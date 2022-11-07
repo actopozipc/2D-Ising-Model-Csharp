@@ -120,6 +120,7 @@ namespace test
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
             List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
             var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+            var oldMagnetization = lattice1.m;
             for (int i = 0; i < iterations; i++)
             {
                 //Save old configuration
@@ -134,8 +135,7 @@ namespace test
                 {
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
                     oldHamiltonian = newHamiltonian;
-                    hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
-                    magnetizations.Add((lattice2.m, i));
+                    oldMagnetization = lattice2.m;
                 }
                 else
                 {
@@ -147,10 +147,13 @@ namespace test
                     if (r < Math.Exp(diffE / (kbT)))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
-                        hamiltons.Add((newHamiltonian, i)); //Safe the new config for statistical reasons
-                        magnetizations.Add((lattice2.m, i));
+                        oldHamiltonian = newHamiltonian;
+                        oldMagnetization = lattice2.m;
+
                     }
                 }
+                hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
+                magnetizations.Add((oldMagnetization, i));
 
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
 
