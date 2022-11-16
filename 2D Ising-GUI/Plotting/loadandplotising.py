@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-arr = np.genfromtxt("07.11.2022 21-19-54.csv",
+arr = np.genfromtxt("12.11.2022 14-57-08.csv",
                     delimiter=",", dtype=(int, float, float), )
 time = []
 hamiltons = []

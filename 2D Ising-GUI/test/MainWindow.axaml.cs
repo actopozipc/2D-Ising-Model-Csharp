@@ -15,11 +15,10 @@ namespace test
         public MainWindow()
         {
             InitializeComponent();
-
         }
         double kb = 1.380649e-23; //Boltzmann-constant
         double Temp = 1; //Fixed Temp
-        double kbT = 2.269;
+        double kbt_overJ = 2.26;
          //Iterations
 
         /// <summary>
@@ -40,11 +39,8 @@ namespace test
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
             List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
 
-
             int count = 0;
-            
             var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
-            
             Parallel.For(0, iterations, i =>
             {
                     //Save old configuration
@@ -56,7 +52,6 @@ namespace test
 
                 if (newHamiltonian < oldHamiltonian)
                 {
-
                     lattice1 = lattice2.Copy(); //Continue with the new configuration
                     oldHamiltonian = newHamiltonian;
                     hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
@@ -70,14 +65,12 @@ namespace test
                     Random random = new Random();
                     var r = random.NextDouble();
                     //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / (kbT)))
+                    if (r < Math.Exp(diffE / (kbt_overJ)))
                     {
-
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                         hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
                         magnetizations.Add((lattice2.m, count));
                         count++;
-
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                         oldHamiltonian = newHamiltonian;
                     }
@@ -114,7 +107,7 @@ namespace test
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
-            Lattice lattice1 = new Lattice(X, Y);
+            Lattice lattice1 = new Lattice(X, Y, false);
             await DrawLatticeToGui(lattice1); //Draw initial lattice
             
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
@@ -125,7 +118,7 @@ namespace test
             {
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
-                                                    //Choose a site i
+                //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
                 
@@ -144,7 +137,7 @@ namespace test
                     Random random = new Random();
                     var r = random.NextDouble();
                     //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / (kbT)))
+                    if (r < Math.Exp(diffE/ kbt_overJ))
                     {
                         lattice1 = lattice2.Copy(); //Continue with the new configuration
                         oldHamiltonian = newHamiltonian;
@@ -154,9 +147,7 @@ namespace test
                 }
                 hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
                 magnetizations.Add((oldMagnetization, i));
-
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
-
                 l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
 

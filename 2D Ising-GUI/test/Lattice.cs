@@ -55,6 +55,34 @@ namespace test
             this.u = u;
 
         }
+
+        public Lattice(int X, int Y, bool Up, int j = 1, int u = 1)
+        {
+            Spins = new int[X, Y];
+            if (Up)
+            {
+                for (int i = 0; i < X; i++)
+                {
+                    for (int k = 0; k < Y; k++)
+                    {
+                       Spins[i, k] = 1;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < X; i++)
+                {
+                    for (int k = 0; k < Y; k++)
+                    {
+                        Spins[i, k] = -1;
+                    }
+                }
+            }
+            J = j;
+            this.u = u;
+        }
+        
         /// <summary>
         /// Inverts a number of elements in the array
         /// </summary>
@@ -108,7 +136,8 @@ namespace test
                     }
                     magnetization = magnetization + Spins[x, y];
                     this.m = magnetization;
-                    energy = energy + spin
+                    energy = energy + 
+                        1 //spin
                     *(left
                     + right
                     + down
