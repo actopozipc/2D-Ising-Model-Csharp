@@ -1,6 +1,7 @@
 ﻿ 
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace test
 {
@@ -37,6 +38,7 @@ namespace test
         {
             Spins = new int[X,Y];
             Random r = new Random();
+          
             for (int i = 0; i < X; i++)
             {
                 for (int k = 0; k < Y; k++)
@@ -108,6 +110,7 @@ namespace test
             //Hamilton = -J * Sum of Energy around a spin - magnetfun
             double energy = 0;
             double magnetization = 0;
+    
             for (int x = 0; x < Spins.GetLength(0); x++)
             {
                 for (int y = 0; y < Spins.GetLength(1); y++)
@@ -137,7 +140,7 @@ namespace test
                     magnetization = magnetization + Spins[x, y];
                     this.m = magnetization;
                     energy = energy + 
-                        1 //spin
+                        spin
                     *(left
                     + right
                     + down
@@ -146,7 +149,7 @@ namespace test
                 }
 
             }
-            return -J * energy - this.u*magnetization;
+            return -J * energy/2 - this.u*magnetization;
         }
         /// <summary>
         /// Print function for console / Later usage 
