@@ -107,7 +107,38 @@ namespace test
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
-            Lattice lattice1 = new Lattice(X, Y, false);
+            Lattice lattice1 = new Lattice(X, Y);
+            switch (cb_spins.SelectedIndex)
+            {
+                case 0:
+                    lattice1 = new Lattice(X, Y, true);
+                    break;
+                case 1:
+                    lattice1 = new Lattice(X, Y, false);
+                    break;
+                case 2:
+                    lattice1 = new Lattice(X, Y);
+                    break;
+                default:
+                     lattice1 = new Lattice(X, Y, true);
+                    break;
+            }
+            UpdateMode updateMode;
+            switch (cb_variation.SelectedIndex)
+            {
+                case 0:
+                    updateMode = UpdateMode.Constant;
+                    break;
+                case 1:
+                    updateMode = UpdateMode.Linear;
+                    break;
+                case 2:
+                    updateMode = UpdateMode.Cos;
+                    break;
+                default:
+                    updateMode = UpdateMode.Constant;
+                    break;
+            }
             await DrawLatticeToGui(lattice1); //Draw initial lattice
             
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
@@ -121,7 +152,7 @@ namespace test
                 //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
-                
+                lattice1.UpdateMagnet(i, updateMode);
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
 
                 if (newHamiltonian < oldHamiltonian)
@@ -147,6 +178,7 @@ namespace test
                 }
                 hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
                 magnetizations.Add((oldMagnetization, i));
+                
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
                 l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";

@@ -9,8 +9,8 @@
     
 
     <StackPanel Orientation="Horizontal">
-      <TextBox x:Name="tb_x" Text="256" Width="25" Height="12"></TextBox>
-      <TextBox x:Name="tb_y" Text="128" Width="25" Height="12"></TextBox>
+      <TextBox x:Name="tb_x" Text="32" Width="25" Height="12"></TextBox>
+      <TextBox x:Name="tb_y" Text="32" Width="25" Height="12"></TextBox>
       <Button Click="OnButtonClick"> Start </Button>
       <Button Click="OnButtonClick2">Multithreaded</Button>
      
@@ -25,21 +25,36 @@
         </StackPanel>
 
 
-       
 
-    
+        <StackPanel Orientation="Vertical">
+          <ComboBox x:Name="cb_spins" SelectedIndex="0">
+            <ComboBoxItem>Up</ComboBoxItem>
+            <ComboBoxItem>Down</ComboBoxItem>
+            <ComboBoxItem>Random</ComboBoxItem>
+          </ComboBox>
+          <ComboBox x:Name="cb_variation" SelectedIndex="0">
+            <ComboBoxItem>Constant</ComboBoxItem>
+            <ComboBoxItem>Linear</ComboBoxItem>
+            <ComboBoxItem>Cos</ComboBoxItem>
+          </ComboBox>
+        </StackPanel>
+
         <StackPanel HorizontalAlignment="Right" >
+
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Label>Iterations:</Label>
             <TextBox x:Name="tb_iterations" Text="1000" Width="50" Height="20"></TextBox>
           </StackPanel>
           <StackPanel Orientation="Horizontal">
             <Label>Flips:</Label>
-            <TextBox x:Name="tb_flips" Text="100" Width="50" Height="20"></TextBox>
+            <TextBox x:Name="tb_flips" Text="1" Width="50" Height="20"></TextBox>
           </StackPanel>
+          
         </StackPanel>
+      
       </StackPanel>
-
+    
+      
     </StackPanel>
 
 

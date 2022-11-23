@@ -1,6 +1,7 @@
 ﻿ 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace test
@@ -22,11 +23,15 @@ namespace test
         /// <summary>
         /// Magnetization factor
         /// </summary>
-        public int u { get; set; }
+        public double u { get; set; }
         /// <summary>
         /// Magnetization
         /// </summary>
         public double m { get; set; }
+        /// <summary>
+        /// start magnetization factor
+        /// </summary>
+        private double u0 { get; set; }
         /// <summary>
         /// Constructor of the class
         /// Creates a random X times Y Array with -1 or 1
@@ -83,6 +88,7 @@ namespace test
             }
             J = j;
             this.u = u;
+            this.u0 = u;
         }
         
         /// <summary>
@@ -139,17 +145,33 @@ namespace test
                     }
                     magnetization = magnetization + Spins[x, y];
                     this.m = magnetization;
+                    int[] neighbors = new int[4] { left, right, down, up };
+
                     energy = energy + 
                         spin
-                    *(left
-                    + right
-                    + down
-                    + up);
+                    *(neighbors.Sum());
 
                 }
 
             }
             return -J * energy/2 - this.u*magnetization;
+        }
+     
+        public void UpdateMagnet(int x, UpdateMode updateMode, int tau=1)
+        {
+            switch (updateMode)
+            {
+                case UpdateMode.Linear:
+                    this.u += x;
+                    break;
+                case UpdateMode.Cos:
+                    this.u = this.u0 * Math.Cos(Math.PI * x / tau);
+                    break;
+                case UpdateMode.Constant:
+                    break;
+                default:
+                    break;
+            }
         }
         /// <summary>
         /// Print function for console / Later usage 
@@ -197,5 +219,11 @@ namespace test
             return copy;
         }
     }
-
+    public enum UpdateMode
+    {
+        Linear,
+        Cos,
+        Constant
     }
+
+}
