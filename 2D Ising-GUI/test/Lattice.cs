@@ -216,6 +216,7 @@ namespace test
             }
             copy.J = this.J;
             copy.m = this.m;
+            copy.u = this.u;
             return copy;
         }
     }

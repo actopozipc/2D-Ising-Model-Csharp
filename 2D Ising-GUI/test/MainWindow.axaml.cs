@@ -111,16 +111,16 @@ namespace test
             switch (cb_spins.SelectedIndex)
             {
                 case 0:
-                    lattice1 = new Lattice(X, Y, true);
+                    lattice1 = new Lattice(X, Y, true,1,0);
                     break;
                 case 1:
-                    lattice1 = new Lattice(X, Y, false);
+                    lattice1 = new Lattice(X, Y, false,1,0);
                     break;
                 case 2:
-                    lattice1 = new Lattice(X, Y);
+                    lattice1 = new Lattice(X, Y,1,0);
                     break;
                 default:
-                     lattice1 = new Lattice(X, Y, true);
+                     lattice1 = new Lattice(X, Y, true,1,0);
                     break;
             }
             UpdateMode updateMode;
