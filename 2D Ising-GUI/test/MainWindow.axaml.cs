@@ -107,7 +107,7 @@ namespace test
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
-            Lattice lattice1 = new Lattice(X, Y);
+            Lattice lattice1 = new Lattice(X, Y,1, 0);
             switch (cb_spins.SelectedIndex)
             {
                 case 0:
@@ -152,7 +152,7 @@ namespace test
                 //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
-                lattice1.UpdateMagnet(i, updateMode);
+                
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
 
                 if (newHamiltonian < oldHamiltonian)
@@ -178,9 +178,9 @@ namespace test
                 }
                 hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
                 magnetizations.Add((oldMagnetization, i));
-                
+                lattice1.UpdateMagnet(i, updateMode, iterations);
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
-                l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
+                l_accepted.Content = "Accepted energy:" + Math.Round(lattice1.Hamiltonian()).ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
 
             }
