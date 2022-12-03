@@ -63,7 +63,7 @@ namespace test
 
         }
 
-        public Lattice(int X, int Y, bool Up, int j = 1, int u = 1)
+        public Lattice(int X, int Y, bool Up, int j = 1, int u = 1, double u0=1)
         {
             Spins = new int[X, Y];
             if (Up)
@@ -88,7 +88,7 @@ namespace test
             }
             J = j;
             this.u = u;
-            this.u0 = u;
+            this.u0 = u0;
         }
         
         /// <summary>
@@ -157,12 +157,12 @@ namespace test
             return -J * energy/2 - this.u*magnetization;
         }
      
-        public void UpdateMagnet(int x, UpdateMode updateMode, int tau=1)
+        public void UpdateMagnet(int x, UpdateMode updateMode, int tau=1, double k = 0.3)
         {
             switch (updateMode)
             {
                 case UpdateMode.Linear:
-                    this.u += x;
+                    this.u += k*x;
                     break;
                 case UpdateMode.Cos:
                     this.u = this.u0 * Math.Cos(Math.PI * x / tau);
@@ -217,6 +217,7 @@ namespace test
             copy.J = this.J;
             copy.m = this.m;
             copy.u = this.u;
+            copy.u0 = this.u0;
             return copy;
         }
     }

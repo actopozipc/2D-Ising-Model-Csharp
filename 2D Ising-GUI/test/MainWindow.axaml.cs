@@ -105,6 +105,7 @@ namespace test
             int flips = Convert.ToInt32(tb_flips.Text);
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
+            kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim());
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
             Lattice lattice1 = new Lattice(X, Y,1, 0);

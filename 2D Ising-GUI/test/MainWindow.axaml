@@ -49,9 +49,10 @@
             <Label>Flips:</Label>
             <TextBox x:Name="tb_flips" Text="1" Width="50" Height="20"></TextBox>
           </StackPanel>
-          
+         
         </StackPanel>
-      
+        <Label>Temp:</Label>
+        <TextBox x:Name="tb_temp" Text="2,26" Width="50" Height="20"></TextBox>
       </StackPanel>
     
       
