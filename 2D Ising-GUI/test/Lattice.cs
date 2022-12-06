@@ -23,7 +23,7 @@ namespace test
         /// <summary>
         /// Magnetization factor
         /// </summary>
-        public double u { get; set; }
+        public double B { get; set; }
         /// <summary>
         /// Magnetization
         /// </summary>
@@ -31,7 +31,7 @@ namespace test
         /// <summary>
         /// start magnetization factor
         /// </summary>
-        private double u0 { get; set; }
+        private double B0 { get; set; }
         /// <summary>
         /// Constructor of the class
         /// Creates a random X times Y Array with -1 or 1
@@ -59,11 +59,11 @@ namespace test
                 }
             }
             J = j;
-            this.u = u;
+            this.B = u;
 
         }
 
-        public Lattice(int X, int Y, bool Up, int j = 1, int u = 1, double u0=1)
+        public Lattice(int X, int Y, bool Up, int j = 1, double B0=1)
         {
             Spins = new int[X, Y];
             if (Up)
@@ -87,8 +87,8 @@ namespace test
                 }
             }
             J = j;
-            this.u = u;
-            this.u0 = u0;
+            this.B = B0;
+            this.B0 = B0;
         }
         
         /// <summary>
@@ -154,7 +154,7 @@ namespace test
                 }
 
             }
-            return -J * energy/2 - this.u*magnetization;
+            return -J * energy/2 - this.B*magnetization;
         }
      
         public void UpdateMagnet(int x, UpdateMode updateMode, int tau=1, double k = 0.3)
@@ -162,10 +162,10 @@ namespace test
             switch (updateMode)
             {
                 case UpdateMode.Linear:
-                    this.u += k*x;
+                    this.B += k*x;
                     break;
                 case UpdateMode.Cos:
-                    this.u = this.u0 * Math.Cos(Math.PI * x / tau);
+                    this.B = this.B0 * Math.Cos(Math.PI * x / tau);
                     break;
                 case UpdateMode.Constant:
                     break;
@@ -216,8 +216,8 @@ namespace test
             }
             copy.J = this.J;
             copy.m = this.m;
-            copy.u = this.u;
-            copy.u0 = this.u0;
+            copy.B = this.B;
+            copy.B0 = this.B0;
             return copy;
         }
     }

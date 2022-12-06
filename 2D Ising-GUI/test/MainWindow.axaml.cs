@@ -19,6 +19,8 @@ namespace test
         double kb = 1.380649e-23; //Boltzmann-constant
         double Temp = 1; //Fixed Temp
         double kbt_overJ = 2.26;
+        int J = 1;
+        int B0 = 1;
          //Iterations
 
         /// <summary>
@@ -105,23 +107,24 @@ namespace test
             int flips = Convert.ToInt32(tb_flips.Text);
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
+            double W = 0; //Work
             kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim());
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
-            Lattice lattice1 = new Lattice(X, Y,1, 0);
+            Lattice lattice1 = new Lattice(X, Y, J, B0);
             switch (cb_spins.SelectedIndex)
             {
                 case 0:
-                    lattice1 = new Lattice(X, Y, true,1,0);
+                    lattice1 = new Lattice(X, Y, true, J, B0);
                     break;
                 case 1:
-                    lattice1 = new Lattice(X, Y, false,1,0);
+                    lattice1 = new Lattice(X, Y, false, J, B0);
                     break;
                 case 2:
-                    lattice1 = new Lattice(X, Y,1,0);
+                    lattice1 = new Lattice(X, Y, J, B0);
                     break;
                 default:
-                     lattice1 = new Lattice(X, Y, true,1,0);
+                     lattice1 = new Lattice(X, Y, true, J, B0);
                     break;
             }
             UpdateMode updateMode;
@@ -148,12 +151,16 @@ namespace test
             var oldMagnetization = lattice1.m;
             for (int i = 0; i < iterations; i++)
             {
+                //Update B(t) 
+                magnetizations.Add((oldMagnetization, i));
+                lattice1.UpdateMagnet(i, updateMode, iterations);
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
+                
                 //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
-                
+               
                 var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
 
                 if (newHamiltonian < oldHamiltonian)
@@ -177,13 +184,17 @@ namespace test
 
                     }
                 }
+                
+                if (hamiltons.Count>2) //Not happy with this if
+                {
+                    W += (hamiltons[hamiltons.Count - 1].Item1 - hamiltons[hamiltons.Count - 2].Item1);
+                }
                 hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
-                magnetizations.Add((oldMagnetization, i));
-                lattice1.UpdateMagnet(i, updateMode, iterations);
+                
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
-                l_accepted.Content = "Accepted energy:" + Math.Round(lattice1.Hamiltonian()).ToString();
+                l_accepted.Content = "Accepted energy:" + Math.Round(oldHamiltonian).ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
-
+                l_Work.Content = $"Work:{W}";
             }
             await WriteToFileAsync(hamiltons, magnetizations);
         }

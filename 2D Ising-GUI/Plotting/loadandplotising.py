@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-arr = np.genfromtxt("03.12.2022 02-25-42.csv",
+arr = np.genfromtxt("06.12.2022 14-29-06.csv",
                     delimiter=",", dtype=(int, float, float), )
 temp = 2.0
 size = 32*32

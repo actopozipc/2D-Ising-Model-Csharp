@@ -21,7 +21,8 @@
           </Label>
           <Label x:Name="l_found" Content="Minimum Energy found:" HorizontalAlignment="Center">
             </Label>
-          
+          <Label x:Name="l_Work" Content="Work:" HorizontalAlignment="Center">
+            </Label>
         </StackPanel>
 
 
