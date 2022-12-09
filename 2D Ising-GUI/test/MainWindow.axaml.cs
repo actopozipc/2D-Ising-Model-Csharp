@@ -7,6 +7,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Text;
+
 namespace test
 {
     public partial class MainWindow : Window
@@ -30,64 +32,64 @@ namespace test
         /// <param name="e"></param>
         private async void OnButtonClick2(object sender, RoutedEventArgs e)
         {
-            int iterations = Convert.ToInt32(tb_iterations.Text);
-            int flips = Convert.ToInt32(tb_flips.Text);
-            int X = Convert.ToInt32(tb_x.Text); //X of Lattice
-            int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
-            irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
-            //Choose an initial state
-            Lattice lattice1 = new Lattice(X, Y);
-            await DrawLatticeToGui(lattice1); //Draw initial lattice
-            List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
-            List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
+            //int iterations = Convert.ToInt32(tb_iterations.Text);
+            //int flips = Convert.ToInt32(tb_flips.Text);
+            //int X = Convert.ToInt32(tb_x.Text); //X of Lattice
+            //int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
+            //irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
+            ////Choose an initial state
+            //Lattice lattice1 = new Lattice(X, Y);
+            //await DrawLatticeToGui(lattice1); //Draw initial lattice
+            //List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
+            //List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
 
-            int count = 0;
-            var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
-            Parallel.For(0, iterations, i =>
-            {
-                    //Save old configuration
-                    Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
-                    //Choose a site i
-                    lattice2.flipRandomBit(flips);
-                    //Calculate the energy change diffE which results if the spin at site i is overturned
-                    var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
+            //int count = 0;
+            //var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+            //Parallel.For(0, iterations, i =>
+            //{
+            //        //Save old configuration
+            //        Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
+            //        //Choose a site i
+            //        lattice2.flipRandomBit(flips);
+            //        //Calculate the energy change diffE which results if the spin at site i is overturned
+            //        var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
 
-                if (newHamiltonian < oldHamiltonian)
-                {
-                    lattice1 = lattice2.Copy(); //Continue with the new configuration
-                    oldHamiltonian = newHamiltonian;
-                    hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
-                    magnetizations.Add((lattice2.m, count));
-                    count++;
-                }
-                else
-                {
-                    var diffE = oldHamiltonian - newHamiltonian; //Energy difference
-                    //Generate a random number r such that 0<r<1
-                    Random random = new Random();
-                    var r = random.NextDouble();
-                    //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / (kbt_overJ)))
-                    {
-                        lattice1 = lattice2.Copy(); //Continue with the new configuration
-                        hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
-                        magnetizations.Add((lattice2.m, count));
-                        count++;
-                        lattice1 = lattice2.Copy(); //Continue with the new configuration
-                        oldHamiltonian = newHamiltonian;
-                    }
-                }
+            //    if (newHamiltonian < oldHamiltonian)
+            //    {
+            //        lattice1 = lattice2.Copy(); //Continue with the new configuration
+            //        oldHamiltonian = newHamiltonian;
+            //        hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+            //        magnetizations.Add((lattice2.m, count));
+            //        count++;
+            //    }
+            //    else
+            //    {
+            //        var diffE = oldHamiltonian - newHamiltonian; //Energy difference
+            //        //Generate a random number r such that 0<r<1
+            //        Random random = new Random();
+            //        var r = random.NextDouble();
+            //        //if r<exp(-diffE/kbT), flip the spin
+            //        if (r < Math.Exp(diffE / (kbt_overJ)))
+            //        {
+            //            lattice1 = lattice2.Copy(); //Continue with the new configuration
+            //            hamiltons.Add((newHamiltonian, count)); //Safe the new config for statistical reasons
+            //            magnetizations.Add((lattice2.m, count));
+            //            count++;
+            //            lattice1 = lattice2.Copy(); //Continue with the new configuration
+            //            oldHamiltonian = newHamiltonian;
+            //        }
+            //    }
                 
-                hamiltons.Add((oldHamiltonian, i)); //Safe the new config for statistical reasons
+            //    hamiltons.Add((oldHamiltonian, i)); //Safe the new config for statistical reasons
 
-            });
+            //});
             
 
-            await DrawLatticeToGui(lattice1, iterations); //Draw new configuration
+            //await DrawLatticeToGui(lattice1, iterations); //Draw new configuration
                 
-                l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
-                l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
-            await WriteToFileAsync(hamiltons, magnetizations);
+            //    l_accepted.Content = "Accepted energy:" + lattice1.Hamiltonian().ToString();
+            //    l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
+            //await WriteToFileAsync(hamiltons, magnetizations);
 
             
         }
@@ -103,15 +105,17 @@ namespace test
         /// <param name="e"></param>
         private async void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            int iterations = Convert.ToInt32(tb_iterations.Text);
-            int flips = Convert.ToInt32(tb_flips.Text);
+            //Get Data from GUI
+            int iterations = Convert.ToInt32(tb_iterations.Text); //Iterations 
+            int flips = Convert.ToInt32(tb_flips.Text); //flips
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
-            double W = 0; //Work
-            kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim());
+            kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim()); //Temp
+            //Initialise Bitmap for GUI
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
             //Choose an initial state
             Lattice lattice1 = new Lattice(X, Y, J, B0);
+            //Determine if all spins up, down or random
             switch (cb_spins.SelectedIndex)
             {
                 case 0:
@@ -127,6 +131,7 @@ namespace test
                      lattice1 = new Lattice(X, Y, true, J, B0);
                     break;
             }
+            //Determine the function for the update of the magnet field
             UpdateMode updateMode;
             switch (cb_variation.SelectedIndex)
             {
@@ -144,9 +149,12 @@ namespace test
                     break;
             }
             await DrawLatticeToGui(lattice1); //Draw initial lattice
-            
+            //Initialise start values and storage containers for the states
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
             List<(double, int)> magnetizations = new List<(double, int)>(); //List of magnetization per iteration
+            List<int[,]> spins = new List<int[,]>(); //List of spin configurations per iteration
+            List<double> work = new List<double>() { 0,0}; //List of works per iteration, 0 and 0 as starting values
+            double W = 0; //Work
             var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
             var oldMagnetization = lattice1.m;
             for (int i = 0; i < iterations; i++)
@@ -156,7 +164,6 @@ namespace test
                 lattice1.UpdateMagnet(i, updateMode, iterations);
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
-                
                 //Choose a site i
                 lattice2.flipRandomBit(flips);
                 //Calculate the energy change diffE which results if the spin at site i is overturned
@@ -178,58 +185,43 @@ namespace test
                     //if r<exp(-diffE/kbT), flip the spin
                     if (r < Math.Exp(diffE/ kbt_overJ))
                     {
-                        lattice1 = lattice2.Copy(); //Continue with the new configuration
+                        //Continue with the new configuration
+                        lattice1 = lattice2.Copy(); 
                         oldHamiltonian = newHamiltonian;
                         oldMagnetization = lattice2.m;
-
                     }
                 }
-                
-                if (hamiltons.Count>2) //Not happy with this if
+
+                if (hamiltons.Count>=2) //Not happy with the if
                 {
                     W += (hamiltons[hamiltons.Count - 1].Item1 - hamiltons[hamiltons.Count - 2].Item1);
+                    work.Add(W);
                 }
-                hamiltons.Add((oldHamiltonian, i)); //Safe the config for statistical reasons
-                
+
+                //Safe the config for statistical reasons
+                hamiltons.Add((oldHamiltonian, i)); 
+                spins.Add(lattice1.Spins);
+                //Update GUI
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
                 l_accepted.Content = "Accepted energy:" + Math.Round(oldHamiltonian).ToString();
                 l_found.Content = "Lowest Energy found / Iteration:" + $"{hamiltons.Min().Item1}/{hamiltons.Min().Item2}";
                 l_Work.Content = $"Work:{W}";
             }
-            await WriteToFileAsync(hamiltons, magnetizations);
+            //Save simulation in file
+            await FileWriterClass.WriteToFileAsync(hamiltons, magnetizations, spins, work, temp: kbt_overJ);
         }
-        /// <summary>
-        /// Writes hamiltons and magnetization into a file
-        /// iteration, hamilton, magnetization
-        /// in this order so numpy can easily convert it
-        /// </summary>
-        public async Task WriteToFileAsync(List<(double, int)> hamiltons, List<(double, int)> magnetizations)
-        {
-            //Order them by time
-            hamiltons.Sort((a, b) => b.Item2.CompareTo(a.Item2));
-            magnetizations.Sort((a, b) => b.Item2.CompareTo(a.Item2));
-            hamiltons.Reverse();
-            magnetizations.Reverse();
-            //hamiltons.OrderBy(x => x.Item2);
-            //magnetizations.OrderBy(x => x.Item2);
-            
-            string[] lines = new string[hamiltons.Count]; //string list for file
-            for (int i = 0; i < hamiltons.Count; i++)
-            {
-                lines[i] = $"{hamiltons[i].Item2}, {hamiltons[i].Item1},{magnetizations[i].Item1}";
-            }
-            await File.WriteAllLinesAsync($"{DateTime.Now.ToString().Replace(':','-')}.csv", lines);
-        }
+        
 
-            /// <summary>
-            /// Draws configuration to the GUI
-            /// GUI is done with Avalonia and Avalnoia doesnt directly support Bitmaps
-            /// Solution: Create a bitmap and write it with a memorystream to the Avalonia source
-            /// </summary>
-            /// <param name="l"></param>
-            /// <param name="count"></param>
-            /// <returns></returns>
-            async Task DrawLatticeToGui(Lattice l, int count=0)
+
+        /// <summary>
+        /// Draws configuration to the GUI
+        /// GUI is done with Avalonia and Avalnoia doesnt directly support Bitmaps
+        /// Solution: Create a bitmap and write it with a memorystream to the Avalonia source
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        async Task DrawLatticeToGui(Lattice l, int count=0)
             {
                 for (int i = 0; i < l.Spins.GetLength(0); i++)
                 {

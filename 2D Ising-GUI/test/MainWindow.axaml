@@ -33,7 +33,7 @@
             <ComboBoxItem>Down</ComboBoxItem>
             <ComboBoxItem>Random</ComboBoxItem>
           </ComboBox>
-          <ComboBox x:Name="cb_variation" SelectedIndex="0">
+          <ComboBox x:Name="cb_variation" SelectedIndex="2">
             <ComboBoxItem>Constant</ComboBoxItem>
             <ComboBoxItem>Linear</ComboBoxItem>
             <ComboBoxItem>Cos</ComboBoxItem>
@@ -44,7 +44,7 @@
 
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Label>Iterations:</Label>
-            <TextBox x:Name="tb_iterations" Text="1000" Width="50" Height="20"></TextBox>
+            <TextBox x:Name="tb_iterations" Text="500" Width="50" Height="20"></TextBox>
           </StackPanel>
           <StackPanel Orientation="Horizontal">
             <Label>Flips:</Label>
@@ -53,7 +53,7 @@
          
         </StackPanel>
         <Label>Temp:</Label>
-        <TextBox x:Name="tb_temp" Text="2,26" Width="50" Height="20"></TextBox>
+        <TextBox x:Name="tb_temp" Text="10" Width="50" Height="20"></TextBox>
       </StackPanel>
     
       
