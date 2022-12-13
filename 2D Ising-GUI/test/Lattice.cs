@@ -157,20 +157,21 @@ namespace test
             return -J * energy/2 - this.B*magnetization;
         }
      
-        public void UpdateMagnet(int x, UpdateMode updateMode, int tau=1, double k = 0.3)
+        public double getUpdatedMagnet(int x, UpdateMode updateMode, int tau=1, double k = 0.3)
         {
             switch (updateMode)
             {
                 case UpdateMode.Linear:
-                    this.B += k*x;
-                    break;
+                    return this.B + k * x;
                 case UpdateMode.Cos:
-                    this.B = this.B0 * Math.Cos(Math.PI * x / tau);
-                    break;
+                    return this.B0 * Math.Cos(Math.PI * x / tau);
+                case UpdateMode.InverseCos:
+
+                    return this.B0;
                 case UpdateMode.Constant:
-                    break;
+                    return this.B;
                 default:
-                    break;
+                    return this.B; 
             }
         }
         /// <summary>
@@ -225,6 +226,7 @@ namespace test
     {
         Linear,
         Cos,
+        InverseCos,
         Constant
     }
 
