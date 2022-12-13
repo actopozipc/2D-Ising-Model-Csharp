@@ -42,16 +42,16 @@ namespace test
             //UpdateMode cosinus
             UpdateMode updateMode = UpdateMode.Cos;
             double[] temps = new double[4] { 10, 20, 30, 50 };
-            int numberOfDataToBeGenerated = 20;
+            int numberOfDataToBeGenerated = 10000;
             int count = 0; //variable to make half of the simulations start from -B0
                            //Generate 1000 csv files for the temps with spins ups and downs and inverse from -B to B
 
             for (int iter = 0; iter < numberOfDataToBeGenerated/temps.Length +1; iter++)
             {
-                count++;
+                
                 Parallel.ForEach(temps, item =>
                 {
-                    int iter = count + 1;
+                    count++;
                     //Choose an initial state
                     Lattice lattice1 = new Lattice(X, Y, J, B0);
                     //Determine if all spins up, down or random
@@ -75,7 +75,7 @@ namespace test
                         }
                         else
                         {
-                            lattice1 = new Lattice(X, Y, true, J, -B0);
+                            lattice1 = new Lattice(X, Y, false, J, -B0);
                         }
                     }
 
