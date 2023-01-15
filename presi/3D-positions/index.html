@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>relative rotations</title>
+    <link href="../css/impress-common.css" rel="stylesheet" />
+    <style type="text/css" media="screen">
+#overview {
+    background: none;
+    border: none;
+    box-shadow: none;
+    width: 1800px;
+    height: 1300px;
+}
+
+#overview div {
+    width: 100%;
+    height: 100%;
+}
+
+.step {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    /* padding: 40px 60px; */
+    /* margin: 20px auto; */
+
+     box-sizing:         border-box;
+     background-color: #3f4b52;
+/*
+    line-height: 1.5;
+
+    
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+
+    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 40pt;
+    letter-spacing: -1px;
+    border: solid 2px red; */
+
+    opacity: 40%;
+}
+
+.step.active {
+    opacity: 100%;
+}
+
+
+
+    </style>
+  </head>
+
+  <body class="impress-not-supported" style="background-color: #171717;">
+    <div id="impress" data-width="2000" data-height="1500">
+      <div id="overview" class="step overview" data-rel-position="relative" data-x="-2000" data-y="-2500" data-z="100" data-scale="3" data-rotate-x="45" data-rotate-y="10">
+          
+      </div>
+
+     
+
+      <div id="ring1-1" class="step" data-rel-reset="all" data-x="0" data-y="0" data-z="0" data-rotate-y="10">
+        <img src="1.png" ></img>
+      </div>
+
+      <div id="ring1-2" class="step" data-rel-rotate-y="45" data-rel-z="-554" data-rel-x="1554">
+        <img src="2.png" ></img>
+      </div>
+
+      <div id="ring1-3" class="step">
+        <img src="3.png" ></img>
+      </div>
+      <div id="ring1-4" class="step">
+        <center>
+          <video controls width="1200px" height="800px">
+            <source src="video.mp4"  type="video/mp4">
+          Your browser does not support the video tag.
+          </video> 
+        </center>
+        
+      </div>
+      <div id="ring1-5" class="step">
+        <img src="4.png" ></img>
+      </div>
+
+      <div id="ring1-6" class="step">
+        <img src="5.png" ></img>
+      </div>
+
+      <div id="ring1-7" class="step">
+        <img src="6.png" ></img>
+      </div>
+
+      <div id="ring1-8" class="step">
+        
+      </div>
+
+      <div id="ring1-8" class="step">
+      <video src=""></video>
+      </div>
+
+
+    <div id="impress-toolbar"></div>
+    <div id="impress-help"></div>
+
+    <script type="text/javascript" src="../js/impress.js"></script>
+    <script>impress().init();</script>
+  </body>
+</html>
