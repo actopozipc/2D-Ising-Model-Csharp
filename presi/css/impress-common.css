@@ -7,11 +7,14 @@ It is focused on plugin functionality, not the visual style of your presentation
 /* Using the substep plugin, hide bullet points at first, then show them one by one. */
 #impress .step .substep {
     opacity: 0;
+    transform: scale(1.5) !important;
 }
+
 
 #impress .step .substep.substep-visible {
     opacity: 1;
     transition: opacity 1s;
+   
 }
 /*
   Speaker notes allow you to write comments within the steps, that will not 
