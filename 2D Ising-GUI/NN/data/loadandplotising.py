@@ -3,12 +3,14 @@ import matplotlib.pyplot as plt
 import csv
 # importing the required modules
 import glob
-
+import seaborn as sns
+sns.set_theme()
+sns.set_context("paper")
 # csv files in the path
 files = glob.glob("*.csv")
 #
 temps = [1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.26]
-names = files  
+names = [files[0]]  
 for name in names:
     filename = name;
 
@@ -45,6 +47,7 @@ for name in names:
     
 
     plt.plot(time, work, label="Work")
+    plt.legend(["Energy","Work"])
     plt.subplot(2,1,2)
     plt.ylabel("Magnet per spin")
     plt.xlabel('Time')

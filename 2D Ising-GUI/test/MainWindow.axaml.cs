@@ -22,7 +22,7 @@ namespace test
         double Temp = 1; //Fixed Temp
         double kbt_overJ = 2.26;
         int J = 1;
-        int B0 = 20;
+        int B0 = 0;
         //Iterations
 
         /// <summary>

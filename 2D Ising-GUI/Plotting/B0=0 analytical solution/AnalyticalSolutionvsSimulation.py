@@ -1,9 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 import csv
 # importing the required modules
 import glob
-
+sns.set_theme()
+sns.set_context("paper")
 # csv files in the path
 files = glob.glob("*.csv")
 #
@@ -16,7 +18,7 @@ for name in names:
     temp = float(data[1].replace(",","."))
     size = int(data[2])
     time = []
-    hamiltons = []
+    hamiltons = []  
     magnet = []
     work = []
     spins = []
@@ -53,9 +55,10 @@ analyticalSolution = []
 temps = [1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.26]
 for r in np.array(temps):
     analyticalSolution.append((1-np.sinh((2/r)*-1)**(-4))**(1/8))
+
 plt.plot(temps,analyticalSolution)
 plt.legend()
 
-plt.ylabel("Analytical Solution / Simulationresult")
-plt.xlabel('Temp')
+plt.ylabel("Analytical  / Simulation")
+plt.xlabel('Temperature')
 plt.show();
