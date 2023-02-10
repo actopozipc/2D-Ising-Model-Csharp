@@ -60,7 +60,7 @@ namespace test
             }
             J = j;
             this.B = u;
-
+            this.B0 = u;
         }
 
         public Lattice(int X, int Y, bool Up, int j = 1, double B0=1)

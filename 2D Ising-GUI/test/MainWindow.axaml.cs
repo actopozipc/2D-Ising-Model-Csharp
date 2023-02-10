@@ -22,7 +22,7 @@ namespace test
         double Temp = 1; //Fixed Temp
         double kbt_overJ = 2.26;
         int J = 1;
-        int B0 = 0;
+        int B0 = 20;
         //Iterations
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace test
             //UpdateMode cosinus
             UpdateMode updateMode = UpdateMode.Cos;
             double[] temps = new double[4] { 10, 20, 30, 50 };
-            int numberOfDataToBeGenerated = 100;
+            int numberOfDataToBeGenerated = 2000;
             int count = 0; //variable to make half of the simulations start from -B0
                            //Generate 1000 csv files for the temps with spins ups and downs and inverse from -B to B
 
@@ -59,11 +59,11 @@ namespace test
                     {
                         if (count % 2 == 0)
                         {
-                            lattice1 = new Lattice(X, Y, true, J, B0);
+                            lattice1 = new Lattice(X, Y, J, B0);
                         }
                         else
                         {
-                            lattice1 = new Lattice(X, Y, true, J, -B0);
+                            lattice1 = new Lattice(X, Y, J, -B0);
                         }
 
                     }
@@ -71,11 +71,11 @@ namespace test
                     {
                         if (count % 2 == 0)
                         {
-                            lattice1 = new Lattice(X, Y, false, J, B0);
+                            lattice1 = new Lattice(X, Y, J, B0);
                         }
                         else
                         {
-                            lattice1 = new Lattice(X, Y, false, J, -B0);
+                            lattice1 = new Lattice(X, Y, J, -B0);
                         }
                     }
 
