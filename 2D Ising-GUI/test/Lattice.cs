@@ -106,6 +106,7 @@ namespace test
             }
             
         }
+        
         /// <summary>
         /// Hamilton = -J * Sum of neighbor spins - (magnetfactor * sum of spins)
         /// At the moment its only the sum of neighbor spins

@@ -179,6 +179,13 @@ namespace test
             int flips = Convert.ToInt32(tb_flips.Text); //flips
             int X = Convert.ToInt32(tb_x.Text); //X of Lattice
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
+            //if sweeping is enabled, flip x*y spins per iteration
+            int repeats = 1;
+            bool sweepOrNot = (bool)c_sweeps.IsChecked; //checks if x*y spins are supposed to flip per iteration or not
+            if (sweepOrNot)
+            {
+                repeats = 10000;//X * Y;
+            }
             kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim()); //Temp
             //Initialise Bitmap for GUI
             irBitmap = new System.Drawing.Bitmap(X, Y, PixelFormat.Format24bppRgb);
@@ -243,48 +250,54 @@ namespace test
 
                 //Save old configuration
                 Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
-                                                    //Choose a site i
-                lattice2.flipRandomBit(flips);
-                //Calculate the energy change diffE which results if the spin at site i is overturned
-
-                var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
-
-                if (newHamiltonian < oldHamiltonian)
+                //if sweeping is enabled, flip x*y spins per iteration
+                for (int repeat = 0; repeat < repeats; repeat++)
                 {
-                    lattice1 = lattice2.Copy(); //Continue with the new configuration
-                    oldHamiltonian = newHamiltonian;
-                    oldMagnetization = lattice2.m;
-                }
-                else
-                {
-                    var diffE = oldHamiltonian - newHamiltonian; //Energy difference
-                                                                 //Generate a random number r such that 0<r<1
-                    Random random = new Random();
-                    var r = random.NextDouble();
-                    //if r<exp(-diffE/kbT), flip the spin
-                    if (r < Math.Exp(diffE / kbt_overJ))
+                    //Choose a site i and flip it
+               
+                    lattice2.flipRandomBit(flips);
+                    //Calculate the energy change diffE which results if the spin at site i is overturned
+
+                    var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
+
+                    if (newHamiltonian < oldHamiltonian)
                     {
-                        //Continue with the new configuration
-                        lattice1 = lattice2.Copy();
+                        lattice1 = lattice2.Copy(); //Continue with the new configuration
                         oldHamiltonian = newHamiltonian;
                         oldMagnetization = lattice2.m;
                     }
-                }
-
-                if (i > 0)
-                {
+                    else
+                    {
+                        var diffE = oldHamiltonian - newHamiltonian; //Energy difference
+                        //Generate a random number r such that 0<r<1
+                        Random random = new Random();
+                        var r = random.NextDouble();
+                        //if r<exp(-diffE/kbT), flip the spin
+                        if (r < Math.Exp(diffE / kbt_overJ))
+                        {
+                            //Continue with the new configuration
+                            lattice1 = lattice2.Copy();
+                            oldHamiltonian = newHamiltonian;
+                            oldMagnetization = lattice2.m;
+                       
+                        }
+                    }
                     lattice1.B = oldBField;
                     double oldBFieldEnergy = lattice1.Hamiltonian();
                     lattice1.B = newBField;
-
                     W += (oldHamiltonian - oldBFieldEnergy);
                     work.Add(W);
+
+
+                    //Safe the config for statistical reasons
+                    hamiltons.Add((oldHamiltonian, i));
+                    spins.Add(lattice1.Spins);
+                    magnetizations.Add((oldMagnetization, i));
                 }
 
-                //Safe the config for statistical reasons
-                hamiltons.Add((oldHamiltonian, i));
-                spins.Add(lattice1.Spins);
-                magnetizations.Add((oldMagnetization, i));
+                
+                    
+                
                 //Update GUI
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
                 l_accepted.Content = "Accepted energy:" + Math.Round(oldHamiltonian).ToString();

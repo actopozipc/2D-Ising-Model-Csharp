@@ -23,11 +23,14 @@
             </Label>
           <Label x:Name="l_Work" Content="Work:" HorizontalAlignment="Center">
             </Label>
+          <CheckBox x:Name="c_sweeps">Sweeps</CheckBox>
         </StackPanel>
 
 
 
         <StackPanel Orientation="Vertical">
+          
+          
           <ComboBox x:Name="cb_spins" SelectedIndex="0">
             <ComboBoxItem>Up</ComboBoxItem>
             <ComboBoxItem>Down</ComboBoxItem>
