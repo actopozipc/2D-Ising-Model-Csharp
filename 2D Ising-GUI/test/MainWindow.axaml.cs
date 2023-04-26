@@ -184,7 +184,7 @@ namespace test
             bool sweepOrNot = (bool)c_sweeps.IsChecked; //checks if x*y spins are supposed to flip per iteration or not
             if (sweepOrNot)
             {
-                repeats = 10000;//X * Y;
+                repeats = X * Y;
             }
             kbt_overJ = Convert.ToDouble(tb_temp.Text.Trim()); //Temp
             //Initialise Bitmap for GUI
@@ -282,22 +282,22 @@ namespace test
                        
                         }
                     }
-                    lattice1.B = oldBField;
-                    double oldBFieldEnergy = lattice1.Hamiltonian();
-                    lattice1.B = newBField;
-                    W += (oldHamiltonian - oldBFieldEnergy);
-                    work.Add(W);
-
-
-                    //Safe the config for statistical reasons
-                    hamiltons.Add((oldHamiltonian, i));
-                    spins.Add(lattice1.Spins);
-                    magnetizations.Add((oldMagnetization, i));
-                }
-
-                
                     
-                
+                    
+                }
+                lattice1.B = oldBField;
+                double oldBFieldEnergy = lattice1.Hamiltonian();
+                lattice1.B = newBField;
+                W += (oldHamiltonian - oldBFieldEnergy);
+                work.Add(W);
+
+
+                //Safe the config for statistical reasons
+                hamiltons.Add((oldHamiltonian, i));
+                spins.Add(lattice1.Spins);
+                magnetizations.Add((oldMagnetization, i));
+
+
                 //Update GUI
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
                 l_accepted.Content = "Accepted energy:" + Math.Round(oldHamiltonian).ToString();
