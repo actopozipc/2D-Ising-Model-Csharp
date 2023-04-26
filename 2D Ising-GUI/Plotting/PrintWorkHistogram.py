@@ -11,5 +11,5 @@ lastWorkValues = []
 for t in traj:
     lastWorkValues.append(t.work[-1])
 
-plt.hist(lastWorkValues, bins = np.linspace(np.min(lastWorkValues),np.max(lastWorkValues),50), density=True)
+plt.hist(lastWorkValues, bins = np.linspace(np.min(lastWorkValues),np.max(lastWorkValues),20), density=True)
 plt.show()
