@@ -41,19 +41,20 @@ namespace test
             int Y = Convert.ToInt32(tb_y.Text); //Y of Lattice
             //UpdateMode cosinus
             UpdateMode updateMode = UpdateMode.Cos;
-            double[] temps = new double[4] { 10, 20, 30, 50 };
-            int numberOfDataToBeGenerated = 2000;
+            double[] temps = new double[4] { 10,20,30,50 }; //temperatures
+            int numberOfDataToBeGenerated = 5000;
             int count = 0; //variable to make half of the simulations start from -B0
                            //Generate 1000 csv files for the temps with spins ups and downs and inverse from -B to B
-
-            for (int iter = 0; iter < numberOfDataToBeGenerated/temps.Length +1; iter++)
+            Lattice lattice1 = new Lattice(X, Y, J, B0);
+            lattice1 = Equilibrium(lattice1, iterations, flips);
+            for (int iter = 0; iter < numberOfDataToBeGenerated; iter++)
             {
                 
-                Parallel.ForEach(temps, item =>
+                Parallel.ForEach(temps, async item =>
                 {
                     count++;
                     //Choose an initial state
-                    Lattice lattice1 = new Lattice(X, Y, J, B0);
+
                     //Determine if all spins up, down or random
                     if (iter % 2 == 0) //make every second iteration start with all spins up
                     {
@@ -144,26 +145,51 @@ namespace test
                     }
 
                     //Save simulation in file
-                    FileWriterClass.WriteToFileAsync(hamiltons, magnetizations, spins, work, temp: item);
-
-
-
+                    await FileWriterClass.WriteToFileAsync(hamiltons, magnetizations, spins, work, temp: item);
 
 
                 });
             }
                 
-           
-            
-               
-            
-
-
-
         }
-        public void GenerateLattice(List<(double, int)> hamiltons, Lattice lattice1)
-        {
 
+        public Lattice Equilibrium(Lattice lattice, int iterations, int flips)
+        {
+            var lattice1 = lattice.Copy();
+            var oldHamiltonian = lattice1.Hamiltonian(); //Hamilton of original state
+            
+            for (int i = 0; i < 100000; i++)
+            {
+                //Save old configuration
+                Lattice lattice2 = lattice1.Copy(); //CARE!!! In csharp = is a copy for structs, but a reference for class objects
+                //Choose a site i and flip it
+                lattice2.flipRandomBit(flips);
+                //Calculate the energy change diffE which results if the spin at site i is overturned
+
+                var newHamiltonian = lattice2.Hamiltonian(); //Hamilton of flipped state
+
+                if (newHamiltonian < oldHamiltonian)
+                {
+                    lattice1 = lattice2.Copy(); //Continue with the new configuration
+                    oldHamiltonian = newHamiltonian;
+                }
+                else
+                {
+                    var diffE = oldHamiltonian - newHamiltonian; //Energy difference
+                    //Generate a random number r such that 0<r<1
+                    Random random = new Random();
+                    var r = random.NextDouble();
+                    //if r<exp(-diffE/kbT), flip the spin
+                    if (r < Math.Exp(diffE / kbt_overJ))
+                    {
+                        //Continue with the new configuration
+                        lattice1 = lattice2.Copy();
+                        oldHamiltonian = newHamiltonian;
+
+                    }
+                }
+            }
+            return lattice1;
         }
         /// <summary>
         /// Singlethreaded
@@ -224,6 +250,7 @@ namespace test
                     updateMode = UpdateMode.Constant;
                     break;
             }
+            lattice1 = Equilibrium(lattice1, iterations, flips);
             await DrawLatticeToGui(lattice1); //Draw initial lattice
                                               //Initialise start values and storage containers for the states
             List<(double, int)> hamiltons = new List<(double, int)>(); //List of Hamiltonians with number of iterations
@@ -296,8 +323,6 @@ namespace test
                 hamiltons.Add((oldHamiltonian, i));
                 spins.Add(lattice1.Spins);
                 magnetizations.Add((oldMagnetization, i));
-
-
                 //Update GUI
                 await DrawLatticeToGui(lattice1, i); //Draw new configuration
                 l_accepted.Content = "Accepted energy:" + Math.Round(oldHamiltonian).ToString();
